@@ -33,6 +33,8 @@ gameScene.create = function() {
 
   this.enemies.add(this.enemy)
 
+  Phaser.Actions.ScaleXY
+
   let dir = Math.random() < 0.5 ? 1 : -1;
   let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed)
   this.enemy.speed = dir * speed;
