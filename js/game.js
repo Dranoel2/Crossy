@@ -8,6 +8,8 @@ gameScene.init = function() {
 
   this.enemyMinY = 80;
   this.enemyMaxY = 280;
+
+  this.isTerminating = false;
 };
 
 gameScene.preload = function() {
@@ -26,22 +28,33 @@ gameScene.create = function() {
 
   this.goal = this.add.sprite(this.sys.game.config.width - 80, this.sys.game.config.height / 2, 'goal').setScale(0.6);
 
-  this.enemy = this.add.sprite(120, this.sys.game.config.height / 2, 'enemy').setScale(0.6);
-  this.enemy.flipX = true;
-
   this.enemies = this.add.group();
 
-  this.enemies.add(this.enemy)
+  this.enemies = this.add.group({
+    key: 'enemy',
+    repeat: 3,
+    setXY: {
+      x: 128,
+      y: 100,
+      stepX: 100,
+      stepY: 20
+    }
+  });
 
-  Phaser.Actions.ScaleXY
+  Phaser.Actions.ScaleXY(this.enemies.getChildren(), -0.4)
 
-  let dir = Math.random() < 0.5 ? 1 : -1;
-  let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed)
-  this.enemy.speed = dir * speed;
-  console.log(this.enemy.speed)
+  Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
+    enemy.flipX = true;
+    let dir = Math.random() < 0.5 ? 1 : -1;
+    let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
+    enemy.speed = dir * speed;
+  }, this);
 };
 
 gameScene.update = function() {
+
+  if (this.isTerminating) return;
+
   if (this.input.activePointer.isDown) {
     this.player.x += this.playerSpeed;
   };
@@ -50,20 +63,54 @@ gameScene.update = function() {
   let treasureRect = this.goal.getBounds();
 
   if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, treasureRect)) {
+    this.isTerminating = true;
     console.log('Reached goal!');
 
-    this.scene.manager.bootScene(this);
-  };
-  this.enemy.y += this.enemy.speed;
+    this.cameras.main.fade(500);
 
-  let conditionUp = this.enemy.speed < 0 && this.enemy.y <= this.enemyMinY
-  let conditionDown = this.enemy.speed > 0 && this.enemy.y >= this.enemyMaxY
-
-  if (conditionUp || conditionDown) {
-    this.enemy.speed *= -1
+    this.cameras.main.on('camerafadeoutcomplete', function(camera, effect) {
+      this.scene.restart()
+    }, this)
   };
+
+  let enemies = this.enemies.getChildren();
+  let numEnemies = enemies.length;
+
+  for (let i = 0; i < numEnemies; i++) {
+    enemies[i].y += enemies[i].speed;
+
+    let conditionUp = enemies[i].speed < 0 && enemies[i].y <= this.enemyMinY
+    let conditionDown = enemies[i].speed > 0 && enemies[i].y >= this.enemyMaxY
+
+    if (conditionUp || conditionDown) {
+      enemies[i].speed *= -1
+    };
+
+    let enemyRect = enemies[i].getBounds();
+
+    if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, enemyRect)) {
+      console.log('Died!');
+
+      return this.gameOver();
+    }
+  }
 
 };
+
+gameScene.gameOver = function() {
+
+  this.isTerminating = true;
+
+  this.cameras.main.shake(500);
+
+  this.cameras.main.on('camerashakecomplete', function(camera, effect) {
+    this.cameras.main.fade(500);
+
+    this.cameras.main.on('camerafadeoutcomplete', function(camera, effect) {
+      this.scene.restart()
+    }, this)
+  }, this)
+}
 
 let config = {
   type: Phaser.AUTO,
