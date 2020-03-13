@@ -28,8 +28,6 @@ gameScene.create = function() {
 
   this.goal = this.add.sprite(this.sys.game.config.width - 80, this.sys.game.config.height / 2, 'goal').setScale(0.6);
 
-  this.enemies = this.add.group();
-
   this.enemies = this.add.group({
     key: 'enemy',
     repeat: 3,
