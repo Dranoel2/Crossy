@@ -16,9 +16,18 @@ gameScene.init = function() {
 
 gameScene.preload = function() {
   this.load.audio('music', [
-        'assets/audio/Questing.ogg',
-        'assets/audio/Questing.mp3'
-    ],true);
+      'assets/audio/Questing.ogg',
+      'assets/audio/Questing.mp3'
+    ]);
+  this.load.audio('boom', [
+    'assets/audio/expl.ogg',
+    'assets/audio/expl.mp3'
+  ]);
+  this.load.audio('boing',[
+    'assets/audio/Boing-sound.ogg',
+    'assets/audio/Boing-sound.mp3'
+  ])
+  this
   this.load.image('background', 'assets/images/background.png');
   this.load.image('player', 'assets/images/pig.png');
   this.load.image('enemy', 'assets/images/lava.png');
@@ -26,10 +35,13 @@ gameScene.preload = function() {
 };
 
 gameScene.create = function() {
+  this.boing = this.sound.add('boing');
+
+  this.boom = this.sound.add('boom');
 
   this.music = this.sound.add('music');
 
-  console.log(this.music)
+  this.music.loop = true;
 
   this.music.play();
 
@@ -62,6 +74,7 @@ gameScene.create = function() {
   }, this);
 };
 
+
 gameScene.update = function() {
   if (this.isTerminating) return;
 
@@ -85,7 +98,7 @@ gameScene.update = function() {
 
   if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, treasureRect)) {
     this.isTerminating = true;
-    
+
     console.log('Reached goal!');
 
     this.music.stop()
@@ -107,6 +120,7 @@ gameScene.update = function() {
     let conditionDown = enemies[i].speed > 0 && enemies[i].y >= this.enemyMaxY
 
     if (conditionUp || conditionDown) {
+      this.boing.play()
       enemies[i].speed *= -1
     };
 
@@ -123,6 +137,10 @@ gameScene.update = function() {
 };
 
 gameScene.gameOver = function() {
+
+  this.boom.play()
+
+  this.player.destroy()
 
   this.music.stop()
 
