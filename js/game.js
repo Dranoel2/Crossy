@@ -42,10 +42,10 @@ gameScene.create = function() {
   Phaser.Actions.ScaleXY(this.enemies.getChildren(), -0.4)
 
   Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
-    enemy.flipX = true;
     let dir = Math.random() < 0.5 ? 1 : -1;
     let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
     enemy.speed = dir * speed;
+    enemy.angle = Math.random() * 360
   }, this);
 };
 
