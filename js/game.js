@@ -16,15 +16,12 @@ gameScene.init = function() {
 
 gameScene.preload = function() {
   this.load.audio('music', [
-      'assets/audio/Questing.ogg',
       'assets/audio/Questing.mp3'
     ]);
   this.load.audio('boom', [
-    'assets/audio/expl.ogg',
     'assets/audio/expl.mp3'
   ]);
   this.load.audio('boing',[
-    'assets/audio/Boing-sound.ogg',
     'assets/audio/Boing-sound.mp3'
   ])
   this
