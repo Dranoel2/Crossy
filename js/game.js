@@ -85,8 +85,9 @@ gameScene.update = function() {
     };
 
     let enemyRect = enemies[i].getBounds();
+    let enemyCircle = new Phaser.Geom.Circle(enemies[i].x, enemies[i].y, enemyRect.width/2)
 
-    if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, enemyRect)) {
+    if (Phaser.Geom.Intersects.CircleToRectangle(enemyCircle, playerRect)) {
       console.log('Died!');
 
       return this.gameOver();
@@ -114,7 +115,7 @@ let config = {
   type: Phaser.AUTO,
   width: 640,
   height: 360,
-  scene: gameScene
+  scene: gameScene,
 };
 
 let game = new Phaser.Game(config);
