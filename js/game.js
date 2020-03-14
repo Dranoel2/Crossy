@@ -10,6 +10,7 @@ gameScene.init = function() {
   this.enemyMaxY = 280;
 
   this.isTerminating = false;
+  this.fadedIn = false
 };
 
 gameScene.preload = function() {
@@ -50,8 +51,18 @@ gameScene.create = function() {
 };
 
 gameScene.update = function() {
-
   if (this.isTerminating) return;
+
+  if (!this.fadedIn) {
+    this.isTerminating = true
+
+    this.cameras.main.fadeIn(500)
+
+    this.cameras.main.on('camerafadeincomplete', function(camera, effect) {
+      this.fadedIn = true;
+      this.isTerminating = false;
+    }, this)
+  }
 
   if (this.input.activePointer.isDown) {
     this.player.x += this.playerSpeed;
