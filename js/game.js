@@ -1,6 +1,7 @@
 let gameScene = new Phaser.Scene('Game');
 
 gameScene.init = function() {
+
   this.playerSpeed = 5;
 
   this.enemyMinSpeed = 2;
@@ -14,13 +15,24 @@ gameScene.init = function() {
 };
 
 gameScene.preload = function() {
-  this.load.image('background', 'assets/background.png');
-  this.load.image('player', 'assets/pig.png');
-  this.load.image('enemy', 'assets/lava.png');
-  this.load.image('goal', 'assets/poop.png');
+  this.load.audio('music', [
+        'assets/audio/Questing.ogg',
+        'assets/audio/Questing.mp3'
+    ],true);
+  this.load.image('background', 'assets/images/background.png');
+  this.load.image('player', 'assets/images/pig.png');
+  this.load.image('enemy', 'assets/images/lava.png');
+  this.load.image('goal', 'assets/images/poop.png');
 };
 
 gameScene.create = function() {
+
+  this.music = this.sound.add('music');
+
+  console.log(this.music)
+
+  this.music.play();
+
   let bg = this.add.sprite(0, 0, 'background');
 
   bg.setOrigin(0, 0);
@@ -73,7 +85,10 @@ gameScene.update = function() {
 
   if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, treasureRect)) {
     this.isTerminating = true;
+    
     console.log('Reached goal!');
+
+    this.music.stop()
 
     this.cameras.main.fade(500);
 
@@ -108,6 +123,8 @@ gameScene.update = function() {
 };
 
 gameScene.gameOver = function() {
+
+  this.music.stop()
 
   this.isTerminating = true;
 
