@@ -1,5 +1,9 @@
 let gameScene = new Phaser.Scene('Game');
 
+this.randint = function(min,max) {
+  return min + Math.random() * (max-min)
+}
+
 gameScene.init = function() {
 
   this.playerSpeed = 5;
@@ -65,7 +69,8 @@ gameScene.create = function() {
 
   Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
     let dir = Math.random() < 0.5 ? 1 : -1;
-    let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
+    let speed = randint(this.enemyMinSpeed,this.enemyMaxSpeed)
+    enemy.rotateSpeed = randint(-10,10);
     enemy.speed = dir * speed;
     enemy.angle = Math.random() * 360
   }, this);
@@ -111,6 +116,8 @@ gameScene.update = function() {
   let numEnemies = enemies.length;
 
   for (let i = 0; i < numEnemies; i++) {
+    enemies[i].angle += enemies[i].rotateSpeed
+
     enemies[i].y += enemies[i].speed;
 
     let conditionUp = enemies[i].speed < 0 && enemies[i].y <= this.enemyMinY
