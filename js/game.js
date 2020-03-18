@@ -60,7 +60,7 @@ gameScene.create = function() {
     setXY: {
       x: 128,
       y: 100,
-      stepX: 100,
+      stepX: 110,
       stepY: 20
     }
   });
